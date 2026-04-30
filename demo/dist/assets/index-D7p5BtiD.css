@@ -1,0 +1,1 @@
+@tailwind base;@tailwind components;@tailwind utilities;@layer base{:root{--background:5 5 5;--foreground:255 255 255}@apply bg-[#050505] text-white antialiased;}@layer utilities{@apply bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent;@apply backdrop-blur-xl bg-white/5 border border-white/10;}

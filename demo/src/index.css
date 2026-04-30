@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "@rainbow-me/rainbowkit/styles.css";
+
+@layer base {
+  :root {
+    --background: 5 5 5;
+    --foreground: 255 255 255;
+  }
+
+  body {
+    background-color: rgb(5 5 5);
+    color: rgb(255 255 255);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(to right, rgb(249 115 22), rgb(245 158 11));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .glass-panel {
+    backdrop-filter: blur(24px);
+    background-color: rgba(255 255 255 0.05);
+    border: 1px solid rgba(255 255 255 0.1);
+  }
+}

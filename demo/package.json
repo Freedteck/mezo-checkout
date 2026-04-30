@@ -1,0 +1,38 @@
+{
+  "name": "@mezo-checkout/demo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mezo-checkout/core": "workspace:*",
+    "@mezo-org/orangekit": "1.0.0-beta.40",
+    "@mezo-org/passport": "^0.17.2",
+    "@rainbow-me/rainbowkit": "^2.2.10",
+    "@tanstack/react-query": "^5.96.2",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.14.0",
+    "viem": "^2.21.58",
+    "wagmi": "^2.19.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vite": "^8.0.3",
+    "vite-plugin-node-polyfills": "^0.26.0"
+  }
+}

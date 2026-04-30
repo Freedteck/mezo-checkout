@@ -16,4 +16,7 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  resolve: {
+    dedupe: ['wagmi', 'viem', 'react', 'react-dom', '@tanstack/react-query'],
+  },
 });

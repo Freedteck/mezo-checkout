@@ -1,6 +1,6 @@
 # MezoCheckout
 
-A fully decentralized, Bitcoin-native payment plugin for the Mezo ecosystem. 
+A fully decentralized, Bitcoin-native payment plugin for the Mezo ecosystem.
 
 With `MezoCheckout`, merchants can seamlessly accept Bitcoin-backed MUSD payments, and buyers can pay using existing MUSD or **borrow against their BTC collateral in real-time** — without ever selling their Bitcoin.
 
@@ -91,14 +91,14 @@ If you want to build your own custom UI, you can import our underlying React hoo
 ### Core Hooks
 
 ```tsx
-import { 
-  useMUSDBalance, 
-  useMUSDApprove, 
+import {
+  useMUSDBalance,
+  useMUSDApprove,
   useMUSDTransfer,
   useOpenTrove,
   useCreateOrder,
   useConfirmDelivery,
-  useCancelOrder
+  useCancelOrder,
 } from "@mezo-checkout/core";
 ```
 
@@ -111,6 +111,7 @@ import {
 ## The Escrow Flow
 
 When `useEscrow={true}` is passed to `<MezoCheckout>`, the plugin uses the `ShoplinkEscrow` contract to protect both parties:
+
 1. Buyer locks MUSD into the Escrow contract.
 2. Seller ships the physical/digital good.
 3. Buyer calls `confirmDelivery(orderId)` to release the funds.
@@ -130,5 +131,5 @@ Currently designed and tested exclusively on the **Mezo Matsnet Testnet**.
 
 ## Support
 
-- GitHub Issues: [github.com/mezo-checkout/core](https://github.com/mezo-checkout/core)
+- GitHub Issues: [github.com/Freedteck/mezo-checkout/issues](https://github.com/Freedteck/mezo-checkout/issues)
 - Mezo Documentation: [docs.mezo.org](https://docs.mezo.org)

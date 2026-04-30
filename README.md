@@ -1,176 +1,99 @@
-# MezoCheckout
+# 🟠 MezoCheckout 
 
-Bitcoin-native payment plugin for the Mezo ecosystem.
+![MezoCheckout Banner](https://img.shields.io/badge/Mezo-Checkout-orange?style=for-the-badge&logo=bitcoin)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Solidity](https://img.shields.io/badge/Solidity-363636?style=for-the-badge&logo=solidity&logoColor=white)
 
-## What is MezoCheckout?
+A fully decentralized, Bitcoin-native payment plugin built exclusively for the Mezo ecosystem. 
 
-MezoCheckout is a drop-in payment component that handles the entire Bitcoin-native payment flow invisibly. Users can pay with MUSD or borrow against their BTC collateral — without ever selling their Bitcoin.
+With `MezoCheckout`, merchants can seamlessly accept Bitcoin-backed MUSD payments, and buyers can pay using existing MUSD or **borrow against their BTC collateral in real-time** — without ever selling their Bitcoin.
 
-### The Problem
+---
 
-Any developer building an app on Mezo that needs to accept payments has to figure out the MUSD integration themselves. They have to understand Troves, BorrowerOperations, collateral ratios, and CDP mechanics just to add a checkout button. That's a high barrier and it slows down the entire Mezo ecosystem.
+## 🏆 Hackathon Submission
 
-### The Solution
+**Track**: Supernormal dApps (MUSD Track)
 
-MezoCheckout is a drop-in payment plugin that any developer can integrate into their app with minimal setup. It handles the entire Bitcoin-native payment flow invisibly — wallet connection via Mezo Passport, BTC collateral check, MUSD minting, and payment to the merchant.
+### Why we built this
+Any developer building an e-commerce or SaaS app on Mezo currently has to figure out the MUSD integration themselves. They have to understand Troves, BorrowerOperations, collateral ratios, and CDP mechanics just to add a simple checkout button. That's a massive barrier to entry.
 
-## Features
+`MezoCheckout` solves this. It is a drop-in React component that handles the entire Bitcoin-native payment flow invisibly. It enables instant self-custodial MUSD minting and direct checkout in under 5 minutes of developer setup.
 
-- **Dual Payment Paths**: Pay with existing MUSD or atomic "Borrow & Pay" with BTC
-- **Mezo Passport Integration**: Seamless wallet connection
-- **Automatic Collateral Management**: Handles Troves, collateral ratios, and CDP mechanics
-- **Escrow Support**: Built-in escrow contract integration
-- **TypeScript Support**: Full type safety
-- **Zero Configuration**: Works out of the box
+---
 
-## Project Structure
+## ⚡ Features
 
-```
+- **Self-Custodial Borrow & Pay**: Users open their own Trove and mint MUSD directly from the Mezo Protocol. No custodial routers.
+- **Dual Payment Modes**: Support for **Escrow Protection** (Smart Contract) or **Direct P2P Transfers**.
+- **Mezo Passport Integration**: Flawless wallet connection via RainbowKit and Wagmi.
+- **Zero Configuration**: A beautifully styled, drop-in React component ready for production.
+
+---
+
+## 🏗️ Monorepo Architecture
+
+This repository is a `pnpm` workspace containing three core packages:
+
+```text
 mezo-checkout/
 ├── packages/
-│   └── mezo-checkout/          # Reusable plugin
-│       ├── src/
-│       │   ├── components/
-│       │   │   └── MezoCheckout.tsx
-│       │   ├── hooks/
-│       │   │   ├── useMUSD.ts
-│       │   │   ├── useEscrow.ts
-│       │   │   └── useRouter.ts
-│       │   ├── lib/
-│       │   │   ├── contracts/
-│       │   │   │   └── addresses.ts
-│       │   │   ├── abis/
-│       │   │   │   └── index.ts
-│       │   │   └── types.ts
-│       │   └── index.ts
-│       ├── package.json
-│       └── README.md
-├── demo/                        # Simple marketplace demo
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx
-│   │   │   └── shops/[id]/page.tsx
-│   │   ├── components/
-│   │   │   └── marketplace/
-│   │   ├── lib/
-│   │   │   └── data.ts
-│   │   └── main.tsx
-│   ├── package.json
-│   └── vite.config.ts
-├── package.json
-└── pnpm-workspace.yaml
+│   └── mezo-checkout/     # The @mezo-checkout/core NPM plugin
+├── demo/                  # The Next.js/Vite Developer Landing Page & Live Demo
+└── contracts/             # Hardhat environment for the ShoplinkEscrow Smart Contract
 ```
 
-## Quick Start
+---
 
-### Installation
+## 🚀 Quick Start (Demo)
+
+Want to see the plugin in action? Run the interactive developer landing page locally!
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/mezo-checkout.git
+# 1. Clone the repository
+git clone https://github.com/Freedteck/mezo-checkout.git
 cd mezo-checkout
 
-# Install dependencies
+# 2. Install workspace dependencies
 pnpm install
 
-# Start the demo
+# 3. Start the demo landing page
 pnpm dev
 ```
+Visit `http://localhost:3000` to test the Live Demo!
 
-### Using the Plugin
+---
+
+## 💻 Developer Installation
+
+If you want to use the plugin in your own application:
 
 ```bash
-# Build the plugin
-pnpm build:plugin
-
-# Install in your project
 npm install @mezo-checkout/core
 ```
 
 ```tsx
 import { MezoCheckout } from "@mezo-checkout/core";
 
-function ProductPage() {
-  const product = {
-    id: "product-123",
-    name: "Premium Widget",
-    description: "High-quality widget",
-    price: 100,
-    image: "https://example.com/widget.jpg",
-  };
-
-  const sellerAddress = "0x1234567890123456789012345678901234567890" as `0x${string}`;
-
+export default function CheckoutPage() {
   return (
     <MezoCheckout
-      product={product}
-      sellerAddress={sellerAddress}
-      onSuccess={(orderId, txHash) => {
-        console.log("Payment successful!", { orderId, txHash });
-      }}
+      product={{ id: "1", price: 50, name: "Premium Widget" }}
+      sellerAddress="0xYourWalletAddress"
+      useEscrow={true} // Set to false for instant P2P transfer!
+      onSuccess={(productId, txHash) => console.log("Success!", txHash)}
     />
   );
 }
 ```
+*For full API documentation, see [packages/mezo-checkout/README.md](./packages/mezo-checkout/README.md)*
 
-## Demo Marketplace
+---
 
-The demo marketplace showcases MezoCheckout in action:
+## 🤝 Support & Contributing
 
-- **3 Featured Shops**: Bitcoin Gear, Crypto Art Gallery, Tech Essentials
-- **Multiple Products**: Each shop has 2-3 products
-- **Live Checkout**: Test both payment paths (MUSD and Borrow & Pay)
-- **Responsive Design**: Works on desktop and mobile
+- **Report a Bug**: [github.com/Freedteck/mezo-checkout/issues](https://github.com/Freedteck/mezo-checkout/issues)
+- **Mezo Documentation**: [docs.mezo.org](https://docs.mezo.org)
 
-### Running the Demo
-
-```bash
-cd mezo-checkout
-pnpm dev
-```
-
-Visit `http://localhost:3000` to see the demo.
-
-## How It Works
-
-### Pay with MUSD
-
-1. User connects wallet via Mezo Passport
-2. Component checks MUSD balance and allowance
-3. If needed, user approves MUSD spending
-4. MUSD is transferred to escrow contract
-5. Order is created and confirmed
-
-### Borrow & Pay (Atomic)
-
-1. User connects wallet via Mezo Passport
-2. Component calculates required BTC collateral
-3. User sends BTC collateral with transaction
-4. Mezo mints MUSD against the collateral
-5. MUSD is routed to escrow contract
-6. All steps happen in a single atomic transaction
-
-## API Reference
-
-See [packages/mezo-checkout/README.md](./packages/mezo-checkout/README.md) for full API documentation.
-
-## Hackathon Submission
-
-**Track**: Supernormal dApps (MUSD Track)
-
-**Judging Criteria**:
-- **Mezo Integration (30%)**: Deep integration with MUSD, Troves, CDP mechanics, Mezo Passport
-- **Technical Implementation (20%)**: Working code, atomic transactions, proper hooks
-- **Business Viability (30%)**: Every e-commerce app on Mezo needs this — solves real developer pain
-- **User Experience (10%)**: Clean checkout UI, invisible crypto mechanics
-- **Presentation Quality (10%)**: Marketplace demo proves it works end-to-end
-
-## License
-
+### License
 MIT
-
-## Support
-
-- GitHub Issues: [github.com/mezo-checkout/core](https://github.com/mezo-checkout/core)
-- Mezo Documentation: [docs.mezo.org](https://docs.mezo.org)
-- Discord: [discord.gg/mezo](https://discord.gg/mezo)

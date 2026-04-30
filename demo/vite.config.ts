@@ -17,6 +17,15 @@ export default defineConfig({
     port: 3000,
   },
   resolve: {
-    dedupe: ['wagmi', 'viem', 'react', 'react-dom', '@tanstack/react-query'],
+    dedupe: [
+      'wagmi', 
+      'viem', 
+      'react', 
+      'react-dom', 
+      '@tanstack/react-query',
+      '@rainbow-me/rainbowkit',
+      '@mezo-org/passport',
+      '@mezo-org/orangekit'
+    ],
   },
 });

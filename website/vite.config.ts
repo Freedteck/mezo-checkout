@@ -19,6 +19,7 @@ export default defineConfig({
       "react": path.resolve(__dirname, "./node_modules/react"),
       "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
       "@tanstack/react-query": path.resolve(__dirname, "./node_modules/@tanstack/react-query"),
+      "@rainbow-me/rainbowkit": path.resolve(__dirname, "./node_modules/@rainbow-me/rainbowkit"),
     },
   },
   build: {

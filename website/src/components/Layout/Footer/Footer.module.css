@@ -34,12 +34,11 @@
   color: var(--text-primary);
 }
 
-.wordmarkDot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
+.logoIcon {
+  display: inline-block;
   flex-shrink: 0;
+  width: 20px;
+  height: 14px;
 }
 
 .wordmarkAccent {

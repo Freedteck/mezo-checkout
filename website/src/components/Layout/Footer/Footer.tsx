@@ -34,7 +34,7 @@ export default function Footer() {
           {/* Brand col */}
           <div className={styles.brand}>
             <div className={styles.wordmark}>
-              <span className={styles.wordmarkDot} />
+              <img src="/logo.svg" className={styles.logoIcon} alt="Mezo Checkout Logo" />
               <span>mezo</span>
               <span className={styles.wordmarkAccent}>checkout</span>
             </div>

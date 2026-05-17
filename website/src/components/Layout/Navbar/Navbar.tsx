@@ -37,7 +37,7 @@ export default function Navbar() {
               className={styles.wordmark}
               aria-label="Mezo Checkout home"
             >
-              <span className={styles.wordmarkDot} />
+              <img src="/logo.svg" className={styles.logoIcon} alt="Mezo Checkout Logo" />
               <span>mezo</span>
               <span className={styles.wordmarkAccent}>checkout</span>
             </Link>

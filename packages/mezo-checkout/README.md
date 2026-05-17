@@ -9,6 +9,7 @@ With `MezoCheckout`, merchants can seamlessly accept Bitcoin-backed MUSD payment
 - **Self-Custodial Borrow & Pay**: Users open their own Trove and mint MUSD directly from the protocol. No custodial routers.
 - **Dual Payment Modes**: Support for **Escrow Protection** (Smart Contract) or **Direct P2P Transfers**.
 - **Mezo Passport Integration**: Flawless wallet connection via RainbowKit and Wagmi.
+- **Theming Support**: Includes dynamic light/dark mode ("system" default) adapting to your app.
 - **Zero Configuration**: A beautifully styled, drop-in React component ready for production.
 
 ## Installation
@@ -76,8 +77,14 @@ function ProductPage() {
       product={product}
       sellerAddress={SELLER_WALLET}
       useEscrow={true} // Set to false for instant P2P transfer!
+      isModal={false}  // Set to true to render as a popup button
+      buttonText="Pay with Mezo" // Only used when isModal={true}
+      theme="system" // Options: "light", "dark", or "system" (default)
       onSuccess={(productId, txHash) => {
         console.log("Success!", txHash);
+      }}
+      onError={(error) => {
+        console.error("Payment failed", error);
       }}
     />
   );

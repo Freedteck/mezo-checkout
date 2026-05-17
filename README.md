@@ -27,6 +27,7 @@ Any developer building an e-commerce or SaaS app on Mezo currently has to figure
 - **Self-Custodial Borrow & Pay**: Users open their own Trove and mint MUSD directly from the Mezo Protocol. No custodial routers.
 - **Dual Payment Modes**: Support for **Escrow Protection** (Smart Contract) or **Direct P2P Transfers**.
 - **Mezo Passport Integration**: Flawless wallet connection via RainbowKit and Wagmi.
+- **Theming Support**: Includes dynamic light/dark mode ("system" default) adapting to your app.
 - **Zero Configuration**: A beautifully styled, drop-in React component ready for production.
 
 ---
@@ -39,15 +40,15 @@ This repository is a `pnpm` workspace containing three core packages:
 mezo-checkout/
 ├── packages/
 │   └── mezo-checkout/     # The @mezo-checkout/core NPM plugin
-├── demo/                  # The Next.js/Vite Developer Landing Page & Live Demo
+├── website/               # The Developer Landing Page, Interactive Docs & Playground
 └── contracts/             # Hardhat environment for the ShoplinkEscrow Smart Contract
 ```
 
 ---
 
-## 🚀 Quick Start (Demo)
+## 🚀 Quick Start (Playground & Docs)
 
-Want to see the plugin in action? Run the interactive developer landing page locally!
+Want to see the plugin in action and read the comprehensive interactive documentation? Run the Developer Hub locally!
 
 ```bash
 # 1. Clone the repository
@@ -57,10 +58,10 @@ cd mezo-checkout
 # 2. Install workspace dependencies
 pnpm install
 
-# 3. Start the demo landing page
+# 3. Start the Developer Hub
 pnpm dev
 ```
-Visit `http://localhost:3000` to test the Live Demo!
+Visit `http://localhost:3001` to test the Live Playground and view the dynamic integration docs!
 
 ---
 
@@ -81,6 +82,8 @@ export default function CheckoutPage() {
       product={{ id: "1", price: 50, name: "Premium Widget" }}
       sellerAddress="0xYourWalletAddress"
       useEscrow={true} // Set to false for instant P2P transfer!
+      isModal={false}  // Set to true to render as a popup button
+      theme="system"   // Options: "light", "dark", or "system" (default)
       onSuccess={(productId, txHash) => console.log("Success!", txHash)}
     />
   );

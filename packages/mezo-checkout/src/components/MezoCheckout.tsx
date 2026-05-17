@@ -8,8 +8,10 @@ import {
   Bitcoin,
   Wallet,
   ChevronRight,
+  ChevronLeft,
   Loader2,
   CheckCircle2,
+  X,
 } from "lucide-react";
 import {
   useMUSDBalance,
@@ -22,11 +24,15 @@ import { useOpenTrove, calcCollateral } from "../hooks/useRouter";
 import { useOrders } from "../hooks/useOrders";
 import { EXPLORER_URL } from "../lib/contracts/addresses";
 import type { Product } from "../lib/types";
+import styles from "./MezoCheckout.module.css";
 
 interface MezoCheckoutProps {
   product: Product;
   sellerAddress: `0x${string}`;
   useEscrow?: boolean;
+  isModal?: boolean;
+  buttonText?: string;
+  theme?: "light" | "dark" | "system";
   onSuccess?: (orderId: `0x${string}`, txHash: string) => void;
   onError?: (error: Error) => void;
 }
@@ -38,10 +44,14 @@ export function MezoCheckout({
   product,
   sellerAddress,
   useEscrow = true,
+  isModal = false,
+  buttonText = "Pay with Mezo",
+  theme = "system",
   onSuccess,
   onError,
 }: MezoCheckoutProps) {
   const { isConnected } = useAccount();
+  const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("select");
   const [step, setStep] = useState<Step>("idle");
   const [successData, setSuccessData] = useState<{ txHash: string } | null>(
@@ -154,205 +164,217 @@ export function MezoCheckout({
     }
   };
 
-  // ─── Success screen ───────────────────────────────────────────────────────
-  if (step === "success" && successData) {
-    return (
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-3 text-emerald-400">
-          <CheckCircle2 className="w-6 h-6 shrink-0" />
-          <div>
-            <p className="font-black text-sm tracking-widest uppercase">
-              Order Confirmed
-            </p>
-            <p className="text-[11px] text-[#a0a0a5] mt-0.5">
-              {useEscrow ? "MUSD held in escrow until delivery" : "MUSD paid directly to seller"}
-            </p>
+  const renderCheckout = () => {
+    // ─── Success screen ───────────────────────────────────────────────────────
+    if (step === "success" && successData) {
+      return (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-3 text-emerald-400">
+            <CheckCircle2 className="w-6 h-6 shrink-0" />
+            <div>
+              <p className="font-black text-sm tracking-widest uppercase">
+                Order Confirmed
+              </p>
+              <p className="text-[11px] text-[#a0a0a5] mt-0.5">
+                {useEscrow ? "MUSD held in escrow until delivery" : "MUSD paid directly to seller"}
+              </p>
+            </div>
           </div>
+          <a
+            href={`${EXPLORER_URL}/tx/${successData.txHash}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-orange-400 hover:text-orange-300 underline font-mono break-all"
+          >
+            {successData.txHash.slice(0, 20)}…{successData.txHash.slice(-8)} ↗
+          </a>
         </div>
-        <a
-          href={`${EXPLORER_URL}/tx/${successData.txHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs text-orange-400 hover:text-orange-300 underline font-mono break-all"
-        >
-          {successData.txHash.slice(0, 20)}…{successData.txHash.slice(-8)} ↗
-        </a>
-      </div>
-    );
-  }
+      );
+    }
 
-  // ─── Not connected ────────────────────────────────────────────────────────
-  if (!isConnected) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-2">
-        <p className="text-sm text-[#a0a0a5]">Connect your Mezo wallet to pay.</p>
-        <ConnectButton label="Connect via Mezo Passport" />
-      </div>
-    );
-  }
-
-  const isLoading =
-    isApproving ||
-    isApprovalConfirming ||
-    isCreating ||
-    isOrderConfirming ||
-    isTransferring ||
-    isTransferConfirming ||
-    isBorrowing ||
-    isBorrowConfirming;
-
-  // ─── Mode selector ────────────────────────────────────────────────────────
-  if (mode === "select") {
-    return (
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 border border-white/10 mb-2">
-          <span className="text-xs text-[#a0a0a5] font-bold uppercase tracking-widest">
-            Total
-          </span>
-          <span className="font-black text-white">{product.price} MUSD</span>
+    // ─── Not connected ────────────────────────────────────────────────────────
+    if (!isConnected) {
+      return (
+        <div className="flex flex-col items-center gap-3 py-2">
+          <p className="text-sm text-[#a0a0a5]">Connect your Mezo wallet to pay.</p>
+          <ConnectButton label="Connect via Mezo Passport" />
         </div>
+      );
+    }
 
-        {errorMessage && (
-          <p className="text-xs text-red-300 bg-red-400/10 rounded-xl px-3 py-2 break-all">
-            {errorMessage}
+    // ─── Mode selector ────────────────────────────────────────────────────────
+    if (mode === "select") {
+      return (
+        <div className={styles.container}>
+          <div className={styles.productCard}>
+            {product.image && <img src={product.image} alt={product.name} className={styles.productImage} />}
+            <div className={styles.productInfo}>
+              <p className={styles.productName}>{product.name}</p>
+              <p className={styles.productDesc}>{product.description}</p>
+            </div>
+          </div>
+
+          <div className={styles.totalRow}>
+            <span className={styles.totalLabel}>
+              Total
+            </span>
+            <span className={styles.totalValue}>{product.price} MUSD</span>
+          </div>
+
+          {errorMessage && (
+            <p className={styles.errorMessage}>
+              {errorMessage}
+            </p>
+          )}
+
+          {/* Button 1: Pay with MUSD */}
+          <button
+            onClick={() => setMode("musd")}
+            className={`${styles.btn} ${styles.btnMUSD}`}
+          >
+            <div className={styles.btnContent}>
+              <Wallet size={20} color="#0066FF" style={{ flexShrink: 0 }} />
+              <div>
+                <p className={styles.btnTitle}>Pay with MUSD</p>
+                <p className={styles.btnSubtitle}>
+                  Pay directly using your MUSD balance
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} color="rgba(255, 255, 255, 0.5)" />
+          </button>
+
+          {/* Button 2: Borrow & Pay */}
+          <button
+            onClick={() => setMode("borrow")}
+            className={`${styles.btn} ${styles.btnBorrow}`}
+          >
+            <div className={styles.btnContent}>
+              <Bitcoin size={20} color="#0066FF" style={{ flexShrink: 0 }} />
+              <div>
+                <p className={styles.btnTitle}>
+                  Borrow &amp; Pay
+                  <span className={styles.badge}>
+                    Self-Custodial
+                  </span>
+                </p>
+                <p className={styles.btnSubtitle}>
+                  Mint MUSD against BTC &amp; pay sequentially
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} color="#0066FF" />
+          </button>
+
+          <p className={styles.poweredBy}>
+            Powered by Mezo · Bitcoin-backed MUSD
           </p>
-        )}
+        </div>
+      );
+    }
 
-        <button
-          onClick={() => setMode("musd")}
-          disabled={!hasEnoughBalance}
-          className="w-full flex items-center justify-between rounded-2xl px-5 py-4 border transition-all
-            bg-white/2 border-white/10 hover:border-orange-500/40 hover:bg-white/4
-            disabled:opacity-40 disabled:cursor-not-allowed group"
-        >
-          <div className="flex items-center gap-3 text-left">
-            <Wallet className="w-5 h-5 text-orange-400 shrink-0" />
-            <div>
-              <p className="text-sm font-black text-white">Pay with MUSD</p>
-              <p className="text-[11px] text-[#a0a0a5]">
-                Balance: {balance !== undefined ? parseFloat(formatUnits(balance, 18)).toFixed(4) : "—"} MUSD
-                {!hasEnoughBalance && " (insufficient)"}
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-[#a0a0a5] group-hover:text-white transition-colors" />
-        </button>
+    // ─── MUSD Pay screen ──────────────────────────────────────────────────────
+    if (mode === "musd") {
+      return (
+        <div className={styles.container}>
+          <button
+            onClick={() => setMode("select")}
+            disabled={step !== "idle"}
+            className={styles.backBtn}
+            style={{ display: 'flex', alignItems: 'center', gap: '4px', opacity: step !== 'idle' ? 0.5 : 1, cursor: step !== 'idle' ? 'not-allowed' : 'pointer' }}
+          >
+            <ChevronLeft size={16} /> Back
+          </button>
+          {errorMessage && (
+            <p className={styles.errorMessage}>
+              {errorMessage}
+            </p>
+          )}
+          <button
+            onClick={handleMUSDCheckout}
+            disabled={step !== "idle"}
+            className={styles.primaryBtn}
+          >
+            {step === "approving" ? "Approving MUSD..." : 
+             step === "paying" ? "Confirming Payment..." : 
+             useEscrow ? `Pay into Escrow (${product.price} MUSD)` : `Pay Directly (${product.price} MUSD)`}
+          </button>
+        </div>
+      );
+    }
 
-        <button
-          onClick={() => setMode("borrow")}
-          className="w-full flex items-center justify-between rounded-2xl px-5 py-4 border transition-all
-            bg-linear-to-br from-orange-500/10 to-amber-600/5 border-orange-500/30
-            hover:border-orange-500/60 hover:from-orange-500/15 group"
-        >
-          <div className="flex items-center gap-3 text-left">
-            <Bitcoin className="w-5 h-5 text-orange-500 shrink-0" />
-            <div>
-              <p className="text-sm font-black text-white">
-                Borrow &amp; Pay
-                <span className="ml-2 text-[9px] font-black text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded tracking-widest uppercase">
-                  Self-Custodial
-                </span>
-              </p>
-              <p className="text-[11px] text-[#a0a0a5]">
-                Mint MUSD against BTC & pay sequentially
-              </p>
-            </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-[#a0a0a5] group-hover:text-orange-400 transition-colors" />
-        </button>
-
-        <p className="text-center text-[10px] text-[#606065] pt-1">
-          Powered by Mezo · Bitcoin-backed MUSD
-        </p>
-      </div>
-    );
-  }
-
-  // ─── MUSD Pay screen ──────────────────────────────────────────────────────
-  if (mode === "musd") {
+    // ─── Borrow & Pay screen ──────────────────────────────────────────────────
     return (
-      <div className="flex flex-col gap-4">
+      <div className={styles.container}>
         <button
           onClick={() => setMode("select")}
-          className="text-xs text-[#a0a0a5] hover:text-white text-left"
+          disabled={step !== "idle"}
+          className={styles.backBtn}
+          style={{ display: 'flex', alignItems: 'center', gap: '4px', opacity: step !== 'idle' ? 0.5 : 1, cursor: step !== 'idle' ? 'not-allowed' : 'pointer' }}
         >
-          ← Back
+          <ChevronLeft size={16} /> Back
         </button>
+
+        <div className={styles.infoBox}>
+          <p className={styles.infoTitle}>How it works</p>
+          <p>1. <span className={styles.boldWhite}>Sign 1:</span> Lock BTC to open your self-custodial Trove.</p>
+          <p>2. <span className={styles.boldBlue}>1,800 MUSD</span> minimum is minted to your wallet.</p>
+          <p>3. <span className={styles.boldWhite}>Sign 2:</span> {product.price} MUSD routes to {useEscrow ? "Escrow" : "Seller"} automatically.</p>
+          
+          <div className={styles.infoDivider} />
+          
+          <div className={styles.infoRow}>
+            <span>Est. BTC to lock:</span>
+            <span className={styles.infoValue}>{estCollateralBtc} BTC</span>
+          </div>
+          <p className={styles.italicText}>
+            Min. 1,800 MUSD Trove debt required by protocol · 200% CR
+          </p>
+        </div>
+
         {errorMessage && (
-          <p className="text-xs text-red-300 bg-red-400/10 rounded-xl px-3 py-2 break-all">
+          <p className={styles.errorMessage}>
             {errorMessage}
           </p>
         )}
+
         <button
-          onClick={handleMUSDCheckout}
-          disabled={isLoading || !hasEnoughBalance}
-          className="w-full rounded-xl px-6 py-3.5 font-black text-white text-sm tracking-widest uppercase transition-all
-            bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400
-            disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20 active:scale-[0.98]"
+          onClick={handleBorrowAndPay}
+          disabled={step !== "idle"}
+          className={styles.primaryBtn}
         >
-          {isLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Processing...
-            </span>
-          ) : (
-            useEscrow ? `Pay into Escrow (${product.price} MUSD)` : `Pay Directly (${product.price} MUSD)`
-          )}
+          {step === "opening_trove" ? "Opening Trove..." :
+           step === "approving" ? "Approving MUSD..." :
+           step === "paying" ? "Confirming Payment..." :
+           `Borrow & Pay ${product.price} MUSD`}
         </button>
+      </div>
+    );
+  };
+
+  const checkoutContent = renderCheckout();
+
+  if (isModal) {
+    return (
+      <div className={styles.themeWrapper} data-theme={theme === "system" ? undefined : theme}>
+        <button onClick={() => setIsOpen(true)} className={styles.modalTriggerBtn}>
+          {buttonText}
+        </button>
+        {isOpen && (
+          <div className={styles.modalOverlay} onClick={() => setIsOpen(false)}>
+            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <button className={styles.closeBtn} onClick={() => setIsOpen(false)}><X size={16} /></button>
+              {checkoutContent}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
-  // ─── Borrow & Pay screen ──────────────────────────────────────────────────
   return (
-    <div className="flex flex-col gap-4">
-      <button
-        onClick={() => setMode("select")}
-        className="text-xs text-[#a0a0a5] hover:text-white text-left"
-      >
-        ← Back
-      </button>
-
-      <div className="rounded-2xl bg-white/2 border border-orange-500/20 p-4 space-y-2 text-xs text-[#a0a0a5]">
-        <p className="font-black text-white text-[11px] uppercase tracking-widest">
-          How it works
-        </p>
-        <p>1. <span className="text-white font-bold">Sign 1:</span> Lock BTC to open your self-custodial Trove.</p>
-        <p>2. <span className="text-orange-400 font-bold">1,800 MUSD</span> minimum is minted to your wallet.</p>
-        <p>3. <span className="text-white font-bold">Sign 2:</span> {product.price} MUSD routes to {useEscrow ? "Escrow" : "Seller"} automatically.</p>
-        <div className="border-t border-white/5 pt-2 flex items-center justify-between">
-          <span>Est. BTC to lock:</span>
-          <span className="text-white font-bold font-mono">{estCollateralBtc} BTC</span>
-        </div>
-        <p className="text-[10px] text-[#505055] italic">
-          Min. 1,800 MUSD Trove debt required by protocol · 200% CR
-        </p>
-      </div>
-
-      {errorMessage && (
-        <p className="text-xs text-red-300 bg-red-400/10 rounded-xl px-3 py-2 break-all">
-          {errorMessage}
-        </p>
-      )}
-
-      <button
-        onClick={handleBorrowAndPay}
-        disabled={isLoading}
-        className="w-full rounded-xl px-6 py-3.5 font-black text-white text-sm tracking-widest uppercase transition-all
-          bg-linear-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400
-          disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-orange-500/30 active:scale-[0.98]"
-      >
-        {isLoading ? (
-          <span className="flex items-center justify-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            {step === "opening_trove" ? "Opening Trove (1/2)..." : 
-             step === "approving" ? "Approving MUSD..." : 
-             useEscrow ? "Funding Escrow (2/2)..." : "Sending Payment (2/2)..."}
-          </span>
-        ) : (
-          `Borrow & Pay ${product.price} MUSD`
-        )}
-      </button>
+    <div className={`${styles.themeWrapper} ${styles.inlineContainer}`} data-theme={theme === "system" ? undefined : theme}>
+      {checkoutContent}
     </div>
   );
 }

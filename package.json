@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --filter demo dev",
-    "build": "pnpm --filter @mezo-checkout/core build && pnpm --filter demo build",
+    "dev": "pnpm --filter @mezo-checkout/website dev",
+    "build": "pnpm --filter @mezo-checkout/core build && pnpm --filter @mezo-checkout/website build",
     "build:plugin": "pnpm --filter @mezo-checkout/core build",
-    "build:demo": "pnpm --filter demo build"
+    "build:website": "pnpm --filter @mezo-checkout/website build"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

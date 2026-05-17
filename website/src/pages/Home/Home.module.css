@@ -1,0 +1,564 @@
+/* ── Page Layout ── */
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.section {
+  padding: 100px 0;
+}
+
+.sectionAlt {
+  background-color: var(--bg-surface);
+}
+
+.sectionHeader {
+  max-width: 600px;
+  margin-bottom: 56px;
+}
+
+.sectionTitle {
+  font-size: 36px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.sectionSubtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 140px 0 100px;
+  background-color: var(--bg-base);
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .heroInner {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.heroContent {
+  max-width: 600px;
+}
+
+.heroTitle {
+  font-size: 64px;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+.heroVisual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mockupWrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 380px;
+  background-color: var(--bg-elevated);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.glowEffect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 70%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.staticMockup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background-color: var(--bg-elevated);
+  padding: 24px;
+  border-radius: 16px;
+  transition: background-color 0.3s;
+}
+
+.mockupHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mockupProduct {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--bg-surface);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.mockupImg {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.mockupName {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.mockupDesc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mockupTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+}
+
+.mockupValue {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.mockupOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-surface);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  transition: border-color 0.15s;
+}
+
+.mockupOptionLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mockupOptionTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mockupOptionSub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.mockupChevron {
+  color: var(--text-muted);
+}
+
+.mockupBadge {
+  font-size: 9px;
+  font-weight: bold;
+  color: var(--accent);
+  background-color: var(--accent-subtle);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.mockupPowered {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.heroSubtitle {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 640px;
+}
+
+.heroCtas {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 64px;
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--accent);
+  color: white;
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  transition: background-color 0.15s, transform 0.1s;
+}
+
+.ctaPrimary:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  background-color: transparent;
+  color: var(--text-primary);
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.ctaSecondary:hover {
+  border-color: var(--text-muted);
+  background-color: var(--bg-surface);
+}
+
+.heroInstall {
+  max-width: 480px;
+}
+
+/* ── Context Bar ── */
+.contextBar {
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  padding: 20px 0;
+}
+
+.contextList {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.contextItem {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.contextDivider {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--border);
+}
+
+/* ── Features & Use Cases ── */
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.feature {
+  background-color: var(--bg-surface);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.feature:hover {
+  border-color: var(--border);
+  transform: translateY(-2px);
+}
+
+.featureIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-elevated);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-subtle);
+}
+
+.featureTitle {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.featureBody {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Trust Block ── */
+.trustBlock {
+  background-color: var(--bg-surface);
+  padding: 64px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle);
+}
+
+.trustHeader {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 48px;
+}
+
+.trustIcon {
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.trustGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .trustGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.trustItem {
+  display: flex;
+  gap: 16px;
+}
+
+.checkIcon {
+  color: var(--success);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.trustItem h3 {
+  font-size: 16px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.trustItem p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Code Section ── */
+.codeSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 64px;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .codeSection {
+    grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+.codeSectionText {
+  max-width: 480px;
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 16px;
+  transition: color 0.15s;
+}
+
+.inlineLink:hover {
+  color: var(--text-primary);
+}
+
+.codeSectionBlock {
+  width: 100%;
+}
+
+/* ── FAQ ── */
+.faqGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px) {
+  .faqGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.faqItem {
+  display: flex;
+  gap: 16px;
+  background-color: var(--bg-surface);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.faqIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.faqQuestion {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.faqAnswer {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── CTA Section ── */
+.ctaSection {
+  padding: 120px 0;
+}
+
+.ctaBlock {
+  background-color: var(--bg-surface);
+  padding: 80px 64px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaBlock::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--accent);
+}
+
+.ctaTitle {
+  font-size: 40px;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.ctaBody {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ctaActions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.ctaGithub {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  color: var(--text-primary);
+  padding: 14px 28px;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.ctaGithub:hover {
+  border-color: var(--text-muted);
+  background-color: var(--bg-elevated);
+}

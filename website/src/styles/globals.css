@@ -1,0 +1,215 @@
+/* ============================================================
+   MEZO CHECKOUT — GLOBAL DESIGN SYSTEM
+   ============================================================ */
+
+/* ── Reset ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Tokens (Dark — default) ── */
+:root,
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-base:      #08080A;
+  --bg-surface:   #111114;
+  --bg-elevated:  #18181C;
+  --bg-input:     #0F0F13;
+  --bg-nav:       rgba(8, 8, 10, 0.85);
+
+  /* Borders */
+  --border:        #222228;
+  --border-subtle: #1A1A20;
+  --border-focus:  #0066FF;
+
+  /* Text */
+  --text-primary:   #F2F2F3;
+  --text-secondary: #9999A6;
+  --text-muted:     #52525B;
+  --text-code:      #A5B4FC;
+
+  /* Accent — Blue */
+  --accent:         #0066FF;
+  --accent-hover:   #0052CC;
+  --accent-subtle:  rgba(0, 102, 255, 0.08);
+  --accent-border:  rgba(0, 102, 255, 0.25);
+
+  /* Status */
+  --success:        #22C55E;
+  --success-subtle: rgba(34, 197, 94, 0.08);
+  --warning:        #F59E0B;
+  --error:          #EF4444;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.6);
+}
+
+/* ── Tokens (Light) ── */
+[data-theme="light"] {
+  /* Backgrounds — warm off-whites, not pure white */
+  --bg-base:      #F5F5F7;
+  --bg-surface:   #FFFFFF;
+  --bg-elevated:  #EEEEF2;
+  --bg-input:     #F0F0F4;
+  --bg-nav:       rgba(245, 245, 247, 0.88);
+
+  /* Borders */
+  --border:        #D8D8E0;
+  --border-subtle: #E5E5EC;
+  --border-focus:  #0066FF;
+
+  /* Text — near-black for primary, dark-grey for secondary */
+  --text-primary:   #0F0F12;
+  --text-secondary: #505060;
+  --text-muted:     #9898A8;
+  --text-code:      #4F46E5;
+
+  /* Accent — same blue, slightly richer hover for light bg */
+  --accent:         #0055DD;
+  --accent-hover:   #0044BB;
+  --accent-subtle:  rgba(0, 85, 221, 0.07);
+  --accent-border:  rgba(0, 85, 221, 0.2);
+
+  /* Status */
+  --success:        #16A34A;
+  --success-subtle: rgba(22, 163, 74, 0.08);
+  --warning:        #D97706;
+  --error:          #DC2626;
+
+  /* Shadows — lighter, subtler on white bg */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:  0 4px 16px rgba(0,0,0,0.1);
+  --shadow-lg:  0 12px 40px rgba(0,0,0,0.12);
+}
+
+/* ── Fixed tokens (same across both themes) ── */
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Sizing */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+
+  /* Layout */
+  --max-width: 1400px;
+  --nav-height: 64px;
+}
+
+/* ── Base ── */
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* ── Theme transition — applied to all elements ── */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+}
+
+/* But don't let the transition block animations that need to be instant */
+[data-theme] * {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.25s;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+code, kbd, pre {
+  font-family: var(--font-mono);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(0, 102, 255, 0.3);
+  color: var(--text-primary);
+}
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Utility classes ── */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── RainbowKit overrides ── */
+[data-rk] button {
+  font-family: var(--font-sans) !important;
+}

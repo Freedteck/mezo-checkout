@@ -1,6 +1,6 @@
 {
   "name": "@mezo-checkout/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bitcoin-native payment plugin for the Mezo ecosystem",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -13,7 +13,7 @@
   },
   "files": ["dist", "src"],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp src/components/*.css dist/components/",
     "dev": "tsc --watch",
     "lint": "eslint src --ext .ts,.tsx"
   },

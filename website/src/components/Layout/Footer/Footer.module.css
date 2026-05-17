@@ -6,8 +6,8 @@
 
 .inner {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
 }
 
 @media (min-width: 640px) {
@@ -15,10 +15,15 @@
     grid-template-columns: 1.5fr 1fr 1fr 1fr;
     gap: 24px;
   }
+  .brand {
+    grid-column: auto !important;
+    margin-bottom: 0 !important;
+  }
 }
 
 /* ── Brand ── */
 .brand {
+  grid-column: span 2;
   display: flex;
   flex-direction: column;
   gap: 10px;

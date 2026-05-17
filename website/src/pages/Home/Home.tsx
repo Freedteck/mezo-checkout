@@ -180,13 +180,25 @@ export default function Home() {
       <section className={styles.contextBar}>
         <div className="container">
           <ul className={styles.contextList} role="list">
-            <li className={styles.contextItem}>TypeScript Native</li>
+            <li className={styles.contextItem}>
+              <Code2 size={15} className={styles.contextIcon} />
+              <span>TypeScript Native</span>
+            </li>
             <li className={styles.contextDivider} aria-hidden="true" />
-            <li className={styles.contextItem}>React 18+ Supported</li>
+            <li className={styles.contextItem}>
+              <Layers size={15} className={styles.contextIcon} />
+              <span>React 18+ Supported</span>
+            </li>
             <li className={styles.contextDivider} aria-hidden="true" />
-            <li className={styles.contextItem}>Zero Configuration</li>
+            <li className={styles.contextItem}>
+              <Zap size={15} className={styles.contextIcon} />
+              <span>Zero Configuration</span>
+            </li>
             <li className={styles.contextDivider} aria-hidden="true" />
-            <li className={styles.contextItem}>Mezo Matsnet</li>
+            <li className={styles.contextItem}>
+              <Globe size={15} className={styles.contextIcon} />
+              <span>Mezo Matsnet</span>
+            </li>
           </ul>
         </div>
       </section>

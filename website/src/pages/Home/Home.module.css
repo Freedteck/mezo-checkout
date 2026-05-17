@@ -279,16 +279,26 @@
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
   background-color: var(--bg-surface);
-  padding: 20px 0;
+  padding: 16px 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.contextBar::-webkit-scrollbar {
+  display: none;
 }
 
 .contextList {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 32px;
+  gap: 24px;
   list-style: none;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  width: max-content;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
 .contextItem {
@@ -296,6 +306,15 @@
   font-size: 12px;
   color: var(--text-muted);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contextIcon {
+  color: var(--accent);
+  opacity: 0.8;
+  flex-shrink: 0;
 }
 
 .contextDivider {
@@ -303,6 +322,7 @@
   height: 4px;
   border-radius: 50%;
   background-color: var(--border);
+  flex-shrink: 0;
 }
 
 /* ── Features & Use Cases ── */
@@ -422,14 +442,14 @@
 /* ── Code Section ── */
 .codeSection {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 64px;
   align-items: center;
 }
 
 @media (min-width: 1024px) {
   .codeSection {
-    grid-template-columns: 1fr 1.2fr;
+    grid-template-columns: 1fr minmax(0, 1.2fr);
   }
 }
 
@@ -561,4 +581,56 @@
 .ctaGithub:hover {
   border-color: var(--text-muted);
   background-color: var(--bg-elevated);
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 100px 0 60px;
+  }
+  .heroTitle {
+    font-size: 40px !important;
+    line-height: 1.15 !important;
+    margin-bottom: 16px !important;
+  }
+  .heroSubtitle {
+    font-size: 16px !important;
+    margin-bottom: 24px !important;
+  }
+  .heroCtas {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-bottom: 32px !important;
+  }
+  .ctaPrimary, .ctaSecondary {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .ctaBlock {
+    padding: 40px 24px !important;
+  }
+  .ctaTitle {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+  .ctaActions {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+  .ctaGithub {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  .section {
+    padding: 60px 0 !important;
+  }
+  .sectionTitle {
+    font-size: 28px !important;
+    line-height: 1.25 !important;
+  }
+  .heroVisual {
+    display: none !important;
+  }
+  .trustBlock {
+    padding: 32px 20px !important;
+  }
 }

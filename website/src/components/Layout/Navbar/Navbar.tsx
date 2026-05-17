@@ -27,7 +27,8 @@ export default function Navbar() {
   const toggleTheme = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
   return (
-    <header className={styles.header}>
+    <>
+      <header className={styles.header}>
       <nav className={styles.nav} aria-label="Main navigation">
         <div className="container">
           <div className={styles.inner}>
@@ -100,49 +101,60 @@ export default function Navbar() {
               </div>
             </div>
 
-            {/* Mobile toggle */}
+            {/* Mobile toggle button inside .inner */}
             <button
               className={styles.mobileToggle}
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
             >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              <Menu size={20} />
             </button>
           </div>
         </div>
-
-        {/* Mobile drawer */}
-        {menuOpen && (
-          <div className={styles.mobileMenu}>
-            <div className="container">
-              <ul role="list" className={styles.mobileLinks}>
-                {NAV_LINKS.map((link) => (
-                  <li key={link.to}>
-                    <NavLink
-                      to={link.to}
-                      className={({ isActive }) =>
-                        `${styles.mobileLink} ${isActive ? styles.mobileLinkActive : ""}`
-                      }
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {link.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-              <div className={styles.mobileConnect}>
-                <ConnectButton
-                  label="Connect Wallet"
-                  accountStatus="full"
-                  chainStatus="none"
-                  showBalance={false}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </nav>
     </header>
+
+    {/* Backdrop Blur Overlay */}
+    <div
+      className={`${styles.backdrop} ${menuOpen ? styles.backdropActive : ""}`}
+      onClick={() => setMenuOpen(false)}
+    />
+
+    {/* Sliding Right-to-Left Drawer */}
+    <div className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ""}`}>
+      <button
+        className={styles.mobileClose}
+        onClick={() => setMenuOpen(false)}
+        aria-label="Close menu"
+      >
+        <X size={20} />
+      </button>
+
+      <ul role="list" className={styles.mobileLinks}>
+        {NAV_LINKS.map((link) => (
+          <li key={link.to}>
+            <NavLink
+              to={link.to}
+              className={({ isActive }) =>
+                `${styles.mobileLink} ${isActive ? styles.mobileLinkActive : ""}`
+              }
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+
+      <div className={styles.mobileConnect}>
+        <ConnectButton
+          label="Connect Wallet"
+          accountStatus="full"
+          chainStatus="none"
+          showBalance={false}
+        />
+      </div>
+    </div>
+  </>
   );
 }

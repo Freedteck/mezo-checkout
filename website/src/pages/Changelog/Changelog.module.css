@@ -203,3 +203,21 @@
   margin-top: 3px;
   flex-shrink: 0;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 60px 16px 40px !important;
+  }
+  .header {
+    margin-bottom: 40px !important;
+  }
+  .title {
+    font-size: 32px !important;
+  }
+  .content {
+    padding: 20px !important;
+  }
+  .itemTitle {
+    font-size: 18px !important;
+  }
+}

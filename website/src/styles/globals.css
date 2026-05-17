@@ -162,6 +162,13 @@ code, kbd, pre {
   font-family: var(--font-mono);
 }
 
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+  white-space: pre;
+  word-wrap: normal;
+}
+
 /* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;

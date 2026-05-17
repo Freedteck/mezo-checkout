@@ -15,6 +15,10 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "@mezo-checkout/core": path.resolve(__dirname, "../packages/mezo-checkout/src/index.ts"),
+      "wagmi": path.resolve(__dirname, "./node_modules/wagmi"),
+      "react": path.resolve(__dirname, "./node_modules/react"),
+      "react-dom": path.resolve(__dirname, "./node_modules/react-dom"),
+      "@tanstack/react-query": path.resolve(__dirname, "./node_modules/@tanstack/react-query"),
     },
   },
   build: {

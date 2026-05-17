@@ -1,4 +1,4 @@
-# MezoCheckout
+# <img src="./logo.png" width="36" height="36" valign="middle" style="border-radius: 6px;" /> MezoCheckout
 
 A fully decentralized, Bitcoin-native payment plugin for the Mezo ecosystem.
 

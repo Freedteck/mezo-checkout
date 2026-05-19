@@ -42,6 +42,7 @@ export default function Playground() {
     useState<MethodId>("component-inline");
   const [logs, setLogs] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   // Form states
   const [price, setPrice] = useState(120);
@@ -53,26 +54,28 @@ export default function Playground() {
 
   // Initialize with the current website theme
   const [compTheme, setCompTheme] = useState<"system" | "light" | "dark">(
-    (typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') as any) || "dark"
+    (typeof document !== "undefined" &&
+      (document.documentElement.getAttribute("data-theme") as any)) ||
+      "dark",
   );
 
   // Listen for website theme changes
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'data-theme') {
-          const newTheme = document.documentElement.getAttribute('data-theme');
-          if (newTheme === 'light' || newTheme === 'dark') {
+        if (mutation.attributeName === "data-theme") {
+          const newTheme = document.documentElement.getAttribute("data-theme");
+          if (newTheme === "light" || newTheme === "dark") {
             setCompTheme(newTheme);
           }
         }
       });
     });
-    
-    if (typeof document !== 'undefined') {
+
+    if (typeof document !== "undefined") {
       observer.observe(document.documentElement, { attributes: true });
     }
-    
+
     return () => observer.disconnect();
   }, []);
 
@@ -83,7 +86,107 @@ export default function Playground() {
     ]);
   };
 
-  const { raw: balance } = useMUSDBalance();
+  // Hook calls
+  const { raw: balance, refetch: refetchBalance } = useMUSDBalance();
+  const { approve } = useMUSDApprove();
+  const { transfer } = useMUSDTransfer();
+  const { openTrove } = useOpenTrove();
+  const { createOrder } = useCreateOrder();
+  const { confirmDelivery } = useConfirmDelivery();
+  const { cancelOrder } = useCancelOrder();
+
+  const handleExecuteMethod = async () => {
+    if (!isConnected) {
+      addLog(
+        "❌ Error: Wallet not connected. Please connect your wallet first.",
+      );
+      return;
+    }
+
+    setIsExecuting(true);
+
+    try {
+      switch (activeMethod) {
+        case "balance": {
+          addLog("Fetching balance...");
+          refetchBalance?.();
+          const balanceValue = balance ? formatUnits(balance, 18) : "0";
+          addLog(`✓ Balance fetched: ${balanceValue} MUSD`);
+          break;
+        }
+
+        case "approve": {
+          addLog("Executing approve...");
+          const amount = parseUnits(price.toString(), 18);
+          const hash = await approve(amount);
+          addLog(`[pending] Transaction: ${hash}`);
+          addLog(`✓ Approve successful! Hash: ${hash}`);
+          break;
+        }
+
+        case "transfer": {
+          addLog("Executing transfer...");
+          const amount = parseUnits(price.toString(), 18);
+          const hash = await transfer(sellerAddress as `0x${string}`, amount);
+          addLog(`[pending] Transaction: ${hash}`);
+          addLog(`✓ Transfer successful! Hash: ${hash}`);
+          break;
+        }
+
+        case "trove": {
+          addLog("Executing openTrove...");
+          const borrowAmount = parseUnits(price.toString(), 18);
+          const collateralBtc = parseUnits("0.045", 18); // 0.045 BTC as collateral
+          const result = await openTrove(borrowAmount, collateralBtc);
+          addLog(`[pending] Transaction: ${result.hash}`);
+          addLog(`✓ Trove opened successfully! Hash: ${result.hash}`);
+          break;
+        }
+
+        case "create-order": {
+          addLog("Executing createOrder...");
+          const amount = parseUnits(price.toString(), 18);
+          const result = await createOrder(
+            sellerAddress as `0x${string}`,
+            amount,
+            "prod_1",
+          );
+          addLog(`[pending] Transaction: ${result.hash}`);
+          if (result.orderId) {
+            addLog(`✓ Order created successfully!`);
+            addLog(`Order ID: ${result.orderId}`);
+            // Auto-populate the order ID for confirmation/cancellation
+            setOrderId(result.orderId);
+          }
+          break;
+        }
+
+        case "confirm": {
+          addLog("Executing confirmDelivery...");
+          const hash = await confirmDelivery(orderId as `0x${string}`);
+          addLog(`[pending] Transaction: ${hash}`);
+          addLog(`✓ Delivery confirmed! Hash: ${hash}`);
+          break;
+        }
+
+        case "cancel": {
+          addLog("Executing cancelOrder...");
+          const hash = await cancelOrder(orderId as `0x${string}`);
+          addLog(`[pending] Transaction: ${hash}`);
+          addLog(`✓ Order cancelled! Hash: ${hash}`);
+          break;
+        }
+
+        default:
+          addLog("No method selected");
+      }
+    } catch (error: any) {
+      const errorMsg = error?.message || error?.toString() || "Unknown error";
+      addLog(`❌ Error: ${errorMsg}`);
+    } finally {
+      setIsExecuting(false);
+    }
+  };
 
   const methods = [
     {
@@ -107,16 +210,26 @@ export default function Playground() {
 
   const getMethodDescription = (id: MethodId) => {
     switch (id) {
-      case "component-inline": return "The complete checkout experience embedded directly in your page. Handles wallet connection, balance checks, and payment flows.";
-      case "component-modal": return "The checkout experience triggered as a popup modal. Great for keeping users on your page until they are ready to pay.";
-      case "balance": return "Reads the user's MUSD balance on the Mezo network.";
-      case "approve": return "Approves the checkout contract to spend the user's MUSD. Required before creating an escrow order.";
-      case "transfer": return "Performs a direct transfer of MUSD from the user to the seller without using the escrow contract.";
-      case "trove": return "Locks Bitcoin collateral to mint equivalent MUSD. Enforces the protocol's minimum debt floor.";
-      case "create-order": return "Locks MUSD in the escrow contract and creates a trackable order. Funds are held until delivery.";
-      case "confirm": return "Called by the buyer to release the locked escrow funds to the seller after receiving the goods.";
-      case "cancel": return "Called by the seller to refund the locked escrow funds back to the buyer.";
-      default: return "";
+      case "component-inline":
+        return "The complete checkout experience embedded directly in your page. Handles wallet connection, balance checks, and payment flows.";
+      case "component-modal":
+        return "The checkout experience triggered as a popup modal. Great for keeping users on your page until they are ready to pay.";
+      case "balance":
+        return "Reads the user's MUSD balance on the Mezo network.";
+      case "approve":
+        return "Approves the checkout contract to spend the user's MUSD. Required before creating an escrow order.";
+      case "transfer":
+        return "Performs a direct transfer of MUSD from the user to the seller without using the escrow contract.";
+      case "trove":
+        return "Locks Bitcoin collateral to mint equivalent MUSD. Enforces the protocol's minimum debt floor.";
+      case "create-order":
+        return "Locks MUSD in the escrow contract and creates a trackable order. Funds are held until delivery.";
+      case "confirm":
+        return "Called by the buyer to release the locked escrow funds to the seller after receiving the goods.";
+      case "cancel":
+        return "Called by the seller to refund the locked escrow funds back to the buyer.";
+      default:
+        return "";
     }
   };
 
@@ -262,7 +375,9 @@ await cancelOrder("${orderId}");`;
             </div>
             {(activeMethod === "component-inline" ||
               activeMethod === "component-modal") && (
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "16px" }}
+              >
                 <label
                   style={{
                     display: "flex",
@@ -321,6 +436,31 @@ await cancelOrder("${orderId}");`;
           <div className={styles.canvasContent}>
             {activeMethod === "component-inline" && (
               <div className={styles.previewBox}>
+                <div
+                  style={{
+                    marginBottom: "24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  <div className={styles.formRow}>
+                    <label>Price (MUSD)</label>
+                    <input
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className={styles.formRow}>
+                    <label>Seller Address</label>
+                    <input
+                      type="text"
+                      value={sellerAddress}
+                      onChange={(e) => setSellerAddress(e.target.value)}
+                    />
+                  </div>
+                </div>
                 <MezoCheckout
                   product={{
                     id: "prod_1",
@@ -333,12 +473,46 @@ await cancelOrder("${orderId}");`;
                   sellerAddress={sellerAddress as `0x${string}`}
                   useEscrow={useEscrow}
                   theme={compTheme}
+                  onSuccess={(orderId, txHash) => {
+                    addLog(`✓ Payment successful!`);
+                    addLog(`Order ID: ${orderId}`);
+                    addLog(`Transaction Hash: ${txHash}`);
+                    setOrderId(orderId);
+                  }}
+                  onError={(error) => {
+                    addLog(`❌ Error: ${error.message}`);
+                  }}
                 />
               </div>
             )}
 
             {activeMethod === "component-modal" && (
               <div className={styles.previewBox}>
+                <div
+                  style={{
+                    marginBottom: "24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
+                  }}
+                >
+                  <div className={styles.formRow}>
+                    <label>Price (MUSD)</label>
+                    <input
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className={styles.formRow}>
+                    <label>Seller Address</label>
+                    <input
+                      type="text"
+                      value={sellerAddress}
+                      onChange={(e) => setSellerAddress(e.target.value)}
+                    />
+                  </div>
+                </div>
                 <MezoCheckout
                   product={{
                     id: "prod_1",
@@ -353,6 +527,15 @@ await cancelOrder("${orderId}");`;
                   buttonText="Pay with Mezo"
                   useEscrow={useEscrow}
                   theme={compTheme}
+                  onSuccess={(orderId, txHash) => {
+                    addLog(`✓ Payment successful!`);
+                    addLog(`Order ID: ${orderId}`);
+                    addLog(`Transaction Hash: ${txHash}`);
+                    setOrderId(orderId);
+                  }}
+                  onError={(error) => {
+                    addLog(`❌ Error: ${error.message}`);
+                  }}
                 />
               </div>
             )}
@@ -368,9 +551,10 @@ await cancelOrder("${orderId}");`;
                 </p>
                 <button
                   className={styles.customBtn}
-                  onClick={() => addLog("Refetching balance...")}
+                  onClick={handleExecuteMethod}
+                  disabled={isExecuting}
                 >
-                  Refetch
+                  {isExecuting ? "Refetching..." : "Refetch"}
                 </button>
               </div>
             )}
@@ -399,9 +583,10 @@ await cancelOrder("${orderId}");`;
                 </div>
                 <button
                   className={styles.customBtn}
-                  onClick={() => addLog(`Executing ${activeMethod}...`)}
+                  onClick={handleExecuteMethod}
+                  disabled={isExecuting}
                 >
-                  Run Method
+                  {isExecuting ? "Executing..." : "Run Method"}
                 </button>
               </div>
             )}
@@ -419,11 +604,10 @@ await cancelOrder("${orderId}");`;
                 </div>
                 <button
                   className={styles.customBtn}
-                  onClick={() =>
-                    addLog(`Executing ${activeMethod} for order ${orderId}`)
-                  }
+                  onClick={handleExecuteMethod}
+                  disabled={isExecuting}
                 >
-                  Submit Action
+                  {isExecuting ? "Submitting..." : "Submit Action"}
                 </button>
               </div>
             )}
@@ -441,9 +625,36 @@ await cancelOrder("${orderId}");`;
           </div>
 
           <div className={styles.logsSection}>
-            <div className={styles.barTitle}>
-              <Terminal size={14} />
-              <span>Output / Logs</span>
+            <div
+              className={styles.barTitle}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "8px" }}
+              >
+                <Terminal size={14} />
+                <span>Output / Logs</span>
+              </div>
+              {logs.length > 0 && (
+                <button
+                  onClick={() => setLogs([])}
+                  style={{
+                    background: "transparent",
+                    border: "1px solid var(--border)",
+                    color: "var(--text-secondary)",
+                    padding: "4px 8px",
+                    borderRadius: "var(--radius-sm)",
+                    fontSize: "12px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Clear
+                </button>
+              )}
             </div>
             <div className={styles.logs}>
               {logs.length === 0 ? (

@@ -38,7 +38,13 @@ interface MezoCheckoutProps {
 }
 
 type Mode = "select" | "musd" | "borrow";
-type Step = "idle" | "approving" | "paying" | "success" | "opening_trove" | "funding_escrow";
+type Step =
+  | "idle"
+  | "approving"
+  | "paying"
+  | "success"
+  | "opening_trove"
+  | "funding_escrow";
 
 export function MezoCheckout({
   product,
@@ -95,7 +101,9 @@ export function MezoCheckout({
   const amountWhole = amount / 10n ** 18n || 1800n;
   const borrowTarget = amountWhole > 1800n ? amountWhole : 1800n;
   const estCollateral = calcCollateral(borrowTarget);
-  const estCollateralBtc = parseFloat(formatUnits(estCollateral, 18)).toFixed(6);
+  const estCollateralBtc = parseFloat(formatUnits(estCollateral, 18)).toFixed(
+    6,
+  );
 
   // ─── MUSD path ────────────────────────────────────────────────────────────
   const handleMUSDCheckout = async () => {
@@ -108,11 +116,15 @@ export function MezoCheckout({
           await refetchAllowance();
         }
         setStep("paying");
-        const { hash, orderId } = await createOrder(sellerAddress, amount, product.id);
+        const { hash, orderId } = await createOrder(
+          sellerAddress,
+          amount,
+          product.id,
+        );
         setSuccessData({ txHash: hash });
         addOrder(orderId || hash);
         setStep("success");
-        onSuccess?.(product.id as `0x${string}`, hash);
+        onSuccess?.(orderId || (hash as `0x${string}`), hash);
       } else {
         setStep("paying");
         const hash = await transfer(sellerAddress, amount);
@@ -121,7 +133,8 @@ export function MezoCheckout({
         onSuccess?.(product.id as `0x${string}`, hash);
       }
     } catch (err) {
-      const error = err instanceof Error ? err : new Error("Transaction failed");
+      const error =
+        err instanceof Error ? err : new Error("Transaction failed");
       setErrorMessage(error.message.slice(0, 160));
       setStep("idle");
       onError?.(error);
@@ -144,11 +157,15 @@ export function MezoCheckout({
           await refetchAllowance();
         }
         setStep("funding_escrow");
-        const { hash, orderId } = await createOrder(sellerAddress, amount, product.id);
+        const { hash, orderId } = await createOrder(
+          sellerAddress,
+          amount,
+          product.id,
+        );
         setSuccessData({ txHash: hash });
         addOrder(orderId || hash);
         setStep("success");
-        onSuccess?.(product.id as `0x${string}`, hash);
+        onSuccess?.(orderId || (hash as `0x${string}`), hash);
       } else {
         setStep("paying");
         const hash = await transfer(sellerAddress, amount);
@@ -157,7 +174,8 @@ export function MezoCheckout({
         onSuccess?.(product.id as `0x${string}`, hash);
       }
     } catch (err) {
-      const error = err instanceof Error ? err : new Error("Transaction failed");
+      const error =
+        err instanceof Error ? err : new Error("Transaction failed");
       setErrorMessage(error.message.slice(0, 160));
       setStep("idle");
       onError?.(error);
@@ -176,7 +194,9 @@ export function MezoCheckout({
                 Order Confirmed
               </p>
               <p className="text-[11px] text-[#a0a0a5] mt-0.5">
-                {useEscrow ? "MUSD held in escrow until delivery" : "MUSD paid directly to seller"}
+                {useEscrow
+                  ? "MUSD held in escrow until delivery"
+                  : "MUSD paid directly to seller"}
               </p>
             </div>
           </div>
@@ -196,7 +216,9 @@ export function MezoCheckout({
     if (!isConnected) {
       return (
         <div className="flex flex-col items-center gap-3 py-2">
-          <p className="text-sm text-[#a0a0a5]">Connect your Mezo wallet to pay.</p>
+          <p className="text-sm text-[#a0a0a5]">
+            Connect your Mezo wallet to pay.
+          </p>
           <ConnectButton label="Connect via Mezo Passport" />
         </div>
       );
@@ -207,7 +229,13 @@ export function MezoCheckout({
       return (
         <div className={styles.container}>
           <div className={styles.productCard}>
-            {product.image && <img src={product.image} alt={product.name} className={styles.productImage} />}
+            {product.image && (
+              <img
+                src={product.image}
+                alt={product.name}
+                className={styles.productImage}
+              />
+            )}
             <div className={styles.productInfo}>
               <p className={styles.productName}>{product.name}</p>
               <p className={styles.productDesc}>{product.description}</p>
@@ -215,16 +243,12 @@ export function MezoCheckout({
           </div>
 
           <div className={styles.totalRow}>
-            <span className={styles.totalLabel}>
-              Total
-            </span>
+            <span className={styles.totalLabel}>Total</span>
             <span className={styles.totalValue}>{product.price} MUSD</span>
           </div>
 
           {errorMessage && (
-            <p className={styles.errorMessage}>
-              {errorMessage}
-            </p>
+            <p className={styles.errorMessage}>{errorMessage}</p>
           )}
 
           {/* Button 1: Pay with MUSD */}
@@ -254,9 +278,7 @@ export function MezoCheckout({
               <div>
                 <p className={styles.btnTitle}>
                   Borrow &amp; Pay
-                  <span className={styles.badge}>
-                    Self-Custodial
-                  </span>
+                  <span className={styles.badge}>Self-Custodial</span>
                 </p>
                 <p className={styles.btnSubtitle}>
                   Mint MUSD against BTC &amp; pay sequentially
@@ -281,23 +303,31 @@ export function MezoCheckout({
             onClick={() => setMode("select")}
             disabled={step !== "idle"}
             className={styles.backBtn}
-            style={{ display: 'flex', alignItems: 'center', gap: '4px', opacity: step !== 'idle' ? 0.5 : 1, cursor: step !== 'idle' ? 'not-allowed' : 'pointer' }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              opacity: step !== "idle" ? 0.5 : 1,
+              cursor: step !== "idle" ? "not-allowed" : "pointer",
+            }}
           >
             <ChevronLeft size={16} /> Back
           </button>
           {errorMessage && (
-            <p className={styles.errorMessage}>
-              {errorMessage}
-            </p>
+            <p className={styles.errorMessage}>{errorMessage}</p>
           )}
           <button
             onClick={handleMUSDCheckout}
             disabled={step !== "idle"}
             className={styles.primaryBtn}
           >
-            {step === "approving" ? "Approving MUSD..." : 
-             step === "paying" ? "Confirming Payment..." : 
-             useEscrow ? `Pay into Escrow (${product.price} MUSD)` : `Pay Directly (${product.price} MUSD)`}
+            {step === "approving"
+              ? "Approving MUSD..."
+              : step === "paying"
+                ? "Confirming Payment..."
+                : useEscrow
+                  ? `Pay into Escrow (${product.price} MUSD)`
+                  : `Pay Directly (${product.price} MUSD)`}
           </button>
         </div>
       );
@@ -310,19 +340,34 @@ export function MezoCheckout({
           onClick={() => setMode("select")}
           disabled={step !== "idle"}
           className={styles.backBtn}
-          style={{ display: 'flex', alignItems: 'center', gap: '4px', opacity: step !== 'idle' ? 0.5 : 1, cursor: step !== 'idle' ? 'not-allowed' : 'pointer' }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "4px",
+            opacity: step !== "idle" ? 0.5 : 1,
+            cursor: step !== "idle" ? "not-allowed" : "pointer",
+          }}
         >
           <ChevronLeft size={16} /> Back
         </button>
 
         <div className={styles.infoBox}>
           <p className={styles.infoTitle}>How it works</p>
-          <p>1. <span className={styles.boldWhite}>Sign 1:</span> Lock BTC to open your self-custodial Trove.</p>
-          <p>2. <span className={styles.boldBlue}>1,800 MUSD</span> minimum is minted to your wallet.</p>
-          <p>3. <span className={styles.boldWhite}>Sign 2:</span> {product.price} MUSD routes to {useEscrow ? "Escrow" : "Seller"} automatically.</p>
-          
+          <p>
+            1. <span className={styles.boldWhite}>Sign 1:</span> Lock BTC to
+            open your self-custodial Trove.
+          </p>
+          <p>
+            2. <span className={styles.boldBlue}>1,800 MUSD</span> minimum is
+            minted to your wallet.
+          </p>
+          <p>
+            3. <span className={styles.boldWhite}>Sign 2:</span> {product.price}{" "}
+            MUSD routes to {useEscrow ? "Escrow" : "Seller"} automatically.
+          </p>
+
           <div className={styles.infoDivider} />
-          
+
           <div className={styles.infoRow}>
             <span>Est. BTC to lock:</span>
             <span className={styles.infoValue}>{estCollateralBtc} BTC</span>
@@ -332,21 +377,20 @@ export function MezoCheckout({
           </p>
         </div>
 
-        {errorMessage && (
-          <p className={styles.errorMessage}>
-            {errorMessage}
-          </p>
-        )}
+        {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
         <button
           onClick={handleBorrowAndPay}
           disabled={step !== "idle"}
           className={styles.primaryBtn}
         >
-          {step === "opening_trove" ? "Opening Trove..." :
-           step === "approving" ? "Approving MUSD..." :
-           step === "paying" ? "Confirming Payment..." :
-           `Borrow & Pay ${product.price} MUSD`}
+          {step === "opening_trove"
+            ? "Opening Trove..."
+            : step === "approving"
+              ? "Approving MUSD..."
+              : step === "paying"
+                ? "Confirming Payment..."
+                : `Borrow & Pay ${product.price} MUSD`}
         </button>
       </div>
     );
@@ -356,14 +400,28 @@ export function MezoCheckout({
 
   if (isModal) {
     return (
-      <div className={styles.themeWrapper} data-theme={theme === "system" ? undefined : theme}>
-        <button onClick={() => setIsOpen(true)} className={styles.modalTriggerBtn}>
+      <div
+        className={styles.themeWrapper}
+        data-theme={theme === "system" ? undefined : theme}
+      >
+        <button
+          onClick={() => setIsOpen(true)}
+          className={styles.modalTriggerBtn}
+        >
           {buttonText}
         </button>
         {isOpen && (
           <div className={styles.modalOverlay} onClick={() => setIsOpen(false)}>
-            <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-              <button className={styles.closeBtn} onClick={() => setIsOpen(false)}><X size={16} /></button>
+            <div
+              className={styles.modalContent}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className={styles.closeBtn}
+                onClick={() => setIsOpen(false)}
+              >
+                <X size={16} />
+              </button>
               {checkoutContent}
             </div>
           </div>
@@ -373,7 +431,10 @@ export function MezoCheckout({
   }
 
   return (
-    <div className={`${styles.themeWrapper} ${styles.inlineContainer}`} data-theme={theme === "system" ? undefined : theme}>
+    <div
+      className={`${styles.themeWrapper} ${styles.inlineContainer}`}
+      data-theme={theme === "system" ? undefined : theme}
+    >
       {checkoutContent}
     </div>
   );

@@ -1,6 +1,6 @@
 {
   "name": "@mezo-checkout/core",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bitcoin-native payment plugin for the Mezo ecosystem",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
